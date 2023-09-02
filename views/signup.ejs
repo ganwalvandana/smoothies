@@ -1,0 +1,72 @@
+<%- include('./includes/start.ejs') %>
+<form action="/signup">
+    <h2>Sign up</h2>
+    <label for="name">Name</label>
+    <input type="text" name="name" />
+    <div class="name error"></div>
+    <label for="phonenumber">Phone Number</label>
+    <input type="number" name="phonenumber" />
+    <div class="phonenumber error"></div>
+    <label for="email">Email</label>
+    <input type="email" name="email" />
+    <div class="email error"></div>
+    <label for="password">Password</label>
+    <input type="password" name="password" />
+    <div class="password error"></div>
+    <button>Sign up</button>
+  </form>
+
+
+    
+    
+    <script>
+        const form = document.querySelector('form');
+        const nameError = document.querySelector('.name.error');
+        const phonenumberError = document.querySelector('.phonenumber.error');
+        const emailError = document.querySelector('.email.error');
+        const passwordError = document.querySelector('.password.error');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                nameError.textContent = '';
+                phonenumberError.textContent = '';
+                emailError.textContent = '';
+                passwordError.textContent = '';
+
+                const name = form.name.value;
+                const phonenumber = form.phonenumber.value;
+                const email = form.email.value;
+                const password = form.password.value;
+
+                try{
+                    const res = await fetch('/signup', {
+                        method: 'POST',
+                        body: JSON.stringify({name, phonenumber, email, password}),
+                        headers: {'Content-Type': 'application/json'}
+                    })
+
+                    const data = await res.json();
+                    console.log(data);
+                    if (data.errors) {
+                        nameError.textContent = data.errors.name;
+                        phonenumberError.textContent = data.errors.phonenumber;
+                        emailError.textContent = data.errors.email;
+                        passwordError.textContent = data.errors.password; 
+
+                    }
+                    if (data.user) {
+                        location.assign('/')
+                    }
+                } 
+                catch(err) {
+                    console.log(err);
+                }
+                
+            });
+    
+    
+    
+    </script>
+    
+<%- include('./includes/end.ejs') %>
